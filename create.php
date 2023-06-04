@@ -1,8 +1,18 @@
 <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "inscription";
+
+
+//Create connection
+$connection = new mysqli($servername, $username, $password, $database);
+
+
 $name = "";
 $lastname = "";
 $email = "";
-$contact = "";
+$phone = "";
 
 $errorMessage = "";
 $successMessage = "";
@@ -12,24 +22,33 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
    $name = $_POST["name"];
    $lastname = $_POST["lastname"];
    $email = $_POST["email"];
-   $contact = $_POST["contact"];
+   $phone = $_POST["phone"];
 
    do { 
-       if (empty($name) || empty($lastname) || empty($email) || empty($contact))
-         {
-            $errorMessage ="Tout les Champs sont obligatoire";
+       if (empty($name) || empty($lastname) || empty($email) || empty($phone)){
+            $errorMessage = "Tout les Champs sont obligatoire";
             break;
         
          }
 
           // ajouter à la database
+         $sql = "INSERT INTO personnes (name, lastname, email, phone) ". 
+                 "VALUES ('$name', '$lastname', '$email', '$phone')";
+          $result = $connection->query($sql);
+
+          if (!$result) {
+            $errorMessage = "Information invalide: " . $connection->error;
+            break;
+          }
+
           $name = "";
           $lastname = "";
           $email = "";
-          $contact = "";
+          $phone = "";
 
           $successMessage = "Inscription effectuée";
-              
+          header("location: /inscription_simplon/index.php");
+          exit;    
 
     } while (false);
 } 
@@ -91,7 +110,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="row mb-3">
                 <label class="col-sm-3 col-form-label">Contact</label>
                 <div class="col-sm-6">
-                    <input type="text" class="form-control" name="contact" value="<?php echo $contact; ?>" >
+                    <input type="text" class="form-control" name="phone" value="<?php echo $phone; ?>" >
                 </div>
             </div>
 
@@ -101,7 +120,7 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class='row mb-3'>
                        <div class='offset-sm-3 col-sm-6'>
                           <div class=' alert alert-success  alert-dismissible fade show' role='alert'>
-                           <strong>$errorMessage</strong>
+                           <strong>$successMessage</strong>
                            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='close'></button>
                           </div>
                         </div>
@@ -116,8 +135,8 @@ if ( $_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <div class="row mb-3">
               <div class="offset-sm-3 col-sm-3 d-grid">
-              <a class="btn btn-outline-primary" href="/inscription_simplon/index.php" role="button">Enregistrer</a>
-                    <button type="text" class="form-control" name="name" value="" >
+                 
+                    <button type="submit" class="btn btn-primary" href="/inscription_simplon/index.php">VALIDER</button>
               </div>
               <div class="col-sm-3 d-grid">
                  <a class="btn btn-outline-primary" href="/inscription_simplon/index.php" role="button">Suprimer</a>
